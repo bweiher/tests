@@ -44,34 +44,32 @@ js_fn <- function(ds, just_quarter = TRUE, additional_js = NULL){
   quarter <- glue("return year + '.' + quarter")
   
   if(isTRUE(just_quarter)){
-    query <- c(query,quarter, glue("}}"))
+    query <- c(query,quarter)
   } else {
     if(is.null(additional_js)) stop("You need to provide an argument for `additional_js`")
    assertthat::assert_that(is.character(additional_js))
-   query <- c(query, paste0(quarter, " + '<br>' + "), additional_js, glue("}}")) 
+   query <- c(query, paste0(quarter, " + '<br>' + "), additional_js) 
   }
-  glue_collapse(query, sep = "\n") %>% 
+  glue_collapse(c(query,glue("}}")), sep = "\n") %>% 
     JS()
 }
 
 
 
-# test 
-js_fn(ds = "this.x", 
-      just_quarter = FALSE
-)
 
-js_fn(ds = "this.x",just_quarter = FALSE,additional_js = 1)
+js_fn(ds = "this.x")
+js_fn(ds = "this.x", just_quarter = FALSE) # expect errors
+js_fn(ds = "this.x",just_quarter = FALSE,additional_js = 1) # expect errors
 
 
-
-          
+# initialize hc object
 hc <- highchart() %>% 
    hc_add_series(df, "line", hcaes(x=quarter, y= yvar)) %>% 
    hc_xAxis(type = "datetime")
 
 
-# default , first day of each month on x axis       
+# default 
+# first day of each quarter is plotted
 hc
            
 
