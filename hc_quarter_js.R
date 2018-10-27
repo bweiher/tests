@@ -15,14 +15,14 @@ seq.Date(ymd(20180101), ymd(20181231), by = "days") %>%
   ) %>% 
   distinct(quarter) %>% 
   mutate(
-    yvar = 10 * runif(4),
-    z = 100 * runif(4)
+    yvar = round(10 * runif(4), 1),
+    z = round(100 * runif(4),1)
   ) -> df
 
 
 
 
-js_fn <- function(ds, just_quarter = TRUE, additional_js = NULL){
+hc_quarter <- function(ds, just_quarter = TRUE, additional_js = NULL){
   
   query <- glue("function(){{
     var n = new Date({ds});
@@ -57,9 +57,9 @@ js_fn <- function(ds, just_quarter = TRUE, additional_js = NULL){
 
 
 
-js_fn(ds = "this.x")
-js_fn(ds = "this.x", just_quarter = FALSE) # expect errors
-js_fn(ds = "this.x",just_quarter = FALSE,additional_js = 1) # expect errors
+hc_quarter(ds = "this.x")
+hc_quarter(ds = "this.x", just_quarter = FALSE) # expect errors
+hc_quarter(ds = "this.x",just_quarter = FALSE,additional_js = 1) # expect errors
 
 
 # initialize hc object
@@ -77,7 +77,7 @@ hc
 hc <- hc  %>% 
   hc_xAxis(type = "datetime",
            labels  = list(
-             formatter =  js_fn(ds = "this.value")
+             formatter =  hc_quarter(ds = "this.value")
            )
            ) 
 
@@ -87,13 +87,13 @@ hc
 
 
 add <-  "
-  'yvar: ' + this.point.y + '<br>' + 
-  'zvar: ' + this.point.z 
+  'yvar: ' + '<i>' + this.point.y + '<br>' + 
+  'zvar: ' + '<i>' + this.point.z 
   "
 
 # do it for the tooltip ; doesn't use this.value , uses this.x instead;
 hc %>% 
-  hc_tooltip(formatter = js_fn(ds = "this.x", 
+  hc_tooltip(formatter = hc_quarter(ds = "this.x", 
                                just_quarter = FALSE,
                                additional_js = add
                                 ))
