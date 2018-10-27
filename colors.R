@@ -29,7 +29,7 @@ df %>%
   unite(col = x, sep = " $ ") %>% 
   pull() -> uniques
 
-map(uniques, ~eval(parse(text =  .))) -> x
+map(uniques, ~eval(parse(text =  .))) # -> x
 
 
 main_cols <- c("cyan", 
@@ -50,7 +50,7 @@ print_str_col <- function(x) {
       paste0("{", ., "}")
   }
    
-   glue_collapse(string) %>% 
+    glue_collapse(string) %>% 
     glue_col() %>% 
     print()
   
@@ -59,8 +59,44 @@ print_str_col <- function(x) {
 
 
 for(g in 1:10){
-  print_str_col("Rainbow_coloring!!!")
+  print_str_col("Rainbow_coloring!!!
+                ooooooh!
+                
+                ")
 }
+
+
+
+len <- length(main_cols)
+
+map_df(c(2:24), 
+       ~tibble(x=rbinom(n = 100, size = .x, prob = 1/6),
+               size = .x) 
+       ) %>% 
+  group_by(size) %>% 
+  summarise(
+    runs =  n(),
+    prop =  sum(ifelse(x > 1, 1, 0))
+  ) %>% 
+  mutate(
+    prop =  prop / runs
+  ) %>% 
+  print(n=Inf)
+  
+
+string <- c("g", "o", "o","d",  "c", "a" , "t")
+x <- string
+
+new_chr <- character(length = length(x))
+
+# for(g in seq_along(x)){
+#   this_col <- sample(main_cols, 1)
+#   new_chr[g] <- this_col
+#     if(new_chr[g - 1L] == ){
+#       
+#     }
+# }
+
 
 
 
